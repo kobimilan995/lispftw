@@ -96,6 +96,15 @@
    (t (potez-oks x1 y1 x2 y2 map))
    )
   (cond
+   ((> (prebroji-za-pobedu-vertikalno x2 y2 map ) '4 ) (format t "POBEDA gore dole ~a" current-player) )
+   )
+  (cond
+   ((> (gore-levo-dole-desno x2 y2 map ) '4 ) (format t "POBEDA dijegonala gore-levo-dole-desno ~a" current-player) )
+   )
+  (cond
+   ((> (gore-desno-dole-levo x2 y2 map ) '4 ) (format t "POBEDA dijegonala gore-desno-dole-levo ~a" current-player) )
+   )
+  (cond
    ((equalp current-player 'X) (setf current-player 'o))
    (t (setf current-player 'x))
    )
@@ -112,12 +121,22 @@
  ) 
   )
 
+;PREBROJAVANJE ZA POBEDU VERTIKALNO
+(defun prebroji-za-pobedu-vertikalno (x2 y2 map)
+  (cond
+   ((> x2 (- dimenzija 3)) '0)
+   ((< x2 2) '0)
+   (t (+ (prebroji-na-dole x2 y2 map) (prebroji-na-gore (- x2 1) y2 map)))
+ )
+  )
+
+
 (defun prebroji-na-dole(x2 y2 map)
   (cond
    ((> x2 (- dimenzija 3)) '0)
-   ((< x2 3) '0)
+   ((< x2 2) '0)
    (t (cond
-       ((equalp (nth y2(nth x2 map)) 'x) (+ 1 (prebroji-na-dole(+ 1 x2) y2 map)))
+       ((equalp (nth y2(nth x2 map)) current-player) (+ 1 (prebroji-na-dole(+ 1 x2) y2 map)))
        (t '0)
        ))
    )
@@ -126,18 +145,93 @@
 (defun prebroji-na-gore(x2 y2 map)
   (cond
    ((> x2 (- dimenzija 3)) '0)
-   ((< x2 3) '0)
+   ((< x2 2) '0)
    (t (cond
-       ((equalp (nth y2(nth x2 map)) 'x) (+ 1 (prebroji-na-gore(- x2 1) y2 map)))
+       ((equalp (nth y2(nth x2 map)) current-player) (+ 1 (prebroji-na-gore(- x2 1) y2 map)))
        (t '0)
        ))
    )
   )
 
-(defun prebroji-za-pobedu-vertikalno (x2 y2 map)
+;PREBROJAVANJE ZA POBEDU DIJAGONALNO
+(defun gore-levo-dole-desno(x2 y2 map)
   (cond
    ((> x2 (- dimenzija 3)) '0)
-   ((< x2 3) '0)
-   (t (+ (prebroji-na-dole x2 y2 map) (prebroji-na-gore (- x2 1) y2 map)))
- )
-)
+   ((< x2 2) '0)
+   ((< y2 0) '0)
+   ((> y2 (- dimenzija 1)) '0)
+   (t (+ (prebroji-gore-levo x2 y2 map) (prebroji-dole-desno (+ x2 1) (+ y2 1) map)))
+   )
+  )
+
+
+(defun prebroji-gore-levo(x2 y2 map)
+  (cond
+   ((> x2 (- dimenzija 3)) '0)
+   ((< x2 2) '0)
+   ((< y2 0) '0)
+   ((> y2 (- dimenzija 1)) '0)
+   (t (cond
+       ((equalp (nth y2(nth x2 map)) current-player) (+ 1 (prebroji-gore-levo(- x2 1) (- y2 1) map)))
+       (t '0)
+       ))
+   )  
+  )
+
+
+(defun prebroji-dole-desno(x2 y2 map)
+  (cond
+   ((> x2 (- dimenzija 3)) '0)
+   ((< x2 2) '0)
+   ((< y2 0) '0)
+   ((> y2 (- dimenzija 1)) '0)
+   (t (cond
+       ((equalp (nth y2(nth x2 map)) current-player) (+ 1 (prebroji-dole-desno(+ x2 1) (+ y2 1) map)))
+       (t '0)
+       ))
+   )  
+  )
+
+
+
+
+
+
+
+(defun gore-desno-dole-levo(x2 y2 map)
+  (cond
+   ((> x2 (- dimenzija 3)) '0)
+   ((< x2 2) '0)
+   ((< y2 0) '0)
+   ((> y2 (- dimenzija 1)) '0)
+   (t (+ (prebroji-gore-desno x2 y2 map) (prebroji-dole-levo (+ x2 1) (- y2 1) map)))
+   )
+  )
+
+
+(defun prebroji-gore-desno(x2 y2 map)
+  (cond
+   ((> x2 (- dimenzija 3)) '0)
+   ((< x2 2) '0)
+   ((< y2 0) '0)
+   ((> y2 (- dimenzija 1)) '0)
+   (t (cond
+       ((equalp (nth y2(nth x2 map)) current-player) (+ 1 (prebroji-gore-desno(- x2 1) (+ y2 1) map)))
+       (t '0)
+       ))
+   )  
+  )
+
+
+(defun prebroji-dole-levo(x2 y2 map)
+  (cond
+   ((> x2 (- dimenzija 3)) '0)
+   ((< x2 2) '0)
+   ((< y2 0) '0)
+   ((> y2 (- dimenzija 1)) '0)
+   (t (cond
+       ((equalp (nth y2(nth x2 map)) current-player) (+ 1 (prebroji-dole-levo(+ x2 1) (- y2 1) map)))
+       (t '0)
+       ))
+   )  
+  )
