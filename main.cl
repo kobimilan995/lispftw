@@ -110,4 +110,34 @@
   ((not(equalp (nth y2 (nth x2 map)) '_)) (format t "zauzeto polje"))
   (t (potez x1 y1 x2 y2 map))
  ) 
+  )
+
+(defun prebroji-na-dole(x2 y2 map)
+  (cond
+   ((> x2 (- dimenzija 3)) '0)
+   ((< x2 3) '0)
+   (t (cond
+       ((equalp (nth y2(nth x2 map)) 'x) (+ 1 (prebroji-na-dole(+ 1 x2) y2 map)))
+       (t '0)
+       ))
+   )
+  )
+
+(defun prebroji-na-gore(x2 y2 map)
+  (cond
+   ((> x2 (- dimenzija 3)) '0)
+   ((< x2 3) '0)
+   (t (cond
+       ((equalp (nth y2(nth x2 map)) 'x) (+ 1 (prebroji-na-gore(- x2 1) y2 map)))
+       (t '0)
+       ))
+   )
+  )
+
+(defun prebroji-za-pobedu-vertikalno (x2 y2 map)
+  (cond
+   ((> x2 (- dimenzija 3)) '0)
+   ((< x2 3) '0)
+   (t (+ (prebroji-na-dole x2 y2 map) (prebroji-na-gore (- x2 1) y2 map)))
+ )
 )
