@@ -1,11 +1,23 @@
 ;;;;;; unos dimenzija
 
+(defun play()
+  (enter-dimension)
+  (game-loop)
+  )
+
+(defun game-loop()
+  (format t "~a - unesite potez! ~%" current-player)
+  (let ((x (read))) (validiraj-potez (car(car x)) (car(cdr(car x))) (car(car(cdr x))) (car(cdr(car(cdr x)))) current-state))
+  (game-loop)
+)
+
 (defun enter-dimension()
   (format t "Unesite zeljenu dimenziju mape  ")
-  (setq dimenzija (read))
+  (setq dimenzija (read)) 
+  (format t "Unesite ko prvi igra(1-player, 2-computer)  ")
+  (setq first-to-play (read))
   (setq current-state (draw-map dimenzija dimenzija))
-  (format t "Unesite prvog igraca! (x ili o)  ")
-  (setq current-player (read))
+  (setq current-player 'x)
   (stampaj current-state dimenzija)
 )
 
@@ -48,7 +60,22 @@
 
 
 ;;;;;;;;; generisanje matrice
-(defun draw-map(n dimenzija)
+(defun draw-map (n dimenzija)
+  (cond
+   ((equalp first-to-play '1) (draw-map-player-first n dimenzija))
+   (t (draw-map-computer-first n dimenzija))
+   )
+)
+(defun draw-map-computer-first(n dimenzija)
+  (cond
+   ((zerop n) '() )
+   ((> n (- dimenzija 2)) (cons(draw-x dimenzija)(draw-map(- n 1) dimenzija)))
+   ((< n 3) (cons(draw-ox dimenzija)(draw-map(- n 1) dimenzija)))
+   (t (cons(draw-empty dimenzija)(draw-map(- n 1) dimenzija)))
+   )
+  )
+
+(defun draw-map-player-first(n dimenzija)
   (cond
    ((zerop n) '() )
    ((> n (- dimenzija 2)) (cons(draw-ox dimenzija)(draw-map(- n 1) dimenzija)))
@@ -65,12 +92,6 @@
   (stampaj-listu-matrice 0 state)
 
   )
-
-
-;;;;;;;;;;;;;;;;POTEZ
-(defun vrati_element(x y pocetna1 pocetna2 char)
-  ()
-)
 
 ;;;;;;;;;;POTEZ ZA IGRACA OKS
 (defun potez-oks(x1 y1 x2 y2 map)
